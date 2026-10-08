@@ -28,6 +28,8 @@ Item {
     property var defaults: ({})
     property var config: ({})
     property string configError: ""
+    readonly property string bindingError: automaticBindings.item ? automaticBindings.item.error : ""
+    Loader { id: automaticBindings; active: root.registerShortcuts; sourceComponent: Component { AutomaticBindings {} } }
     property string overrideLayout: ""
     readonly property bool ready: !!config.profiles && !!config.views
     readonly property var profile: ready ? config.profiles[scope] : ({view: "carousel", preview: "live"})
@@ -207,7 +209,7 @@ Item {
         function cancel(): string { root.close(); return "ok"; }
         function settings(): string { root.settings(); return "ok"; }
         function preview(layout: string): string { return root.preview(layout); }
-        function state(): string { return JSON.stringify({ opened: root.opened, editing: root.editing, scope: root.scope, layout: root.layoutName, view: root.viewId, preview: root.captureMode, count: root.rows.length, selected: root.selected, addresses: root.rows.map(function(w) { return w.address; }), error: root.configError }); }
+        function state(): string { return JSON.stringify({ opened: root.opened, editing: root.editing, scope: root.scope, layout: root.layoutName, view: root.viewId, preview: root.captureMode, count: root.rows.length, selected: root.selected, addresses: root.rows.map(function(w) { return w.address; }), error: root.bindingError || root.configError }); }
         function configuration(): string { return JSON.stringify(Model.persisted(root.config)); }
         function configure(json: string): string {
             try { var next = Model.merge(root.config, JSON.parse(json)); return root.saveSettings(next) ? "ok" : root.configError; }
@@ -349,7 +351,7 @@ Item {
                         height: Math.min(850, panel.height - 48)
                         screenWidth: panel.width; screenHeight: panel.height
                         config: root.config; themeColors: root.themeColors; fontFamily: root.fontFamily
-                        error: root.configError
+                        error: root.bindingError || root.configError
                         onSave: function(next) { saveCompleted(root.saveSettings(next)); }
                         onDismiss: root.close()
                     }

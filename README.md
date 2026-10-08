@@ -32,31 +32,15 @@ Switch Magic keeps your windows in sight while you hold **Alt**, including above
 
 **Requires:** Omarchy 4 with its Quickshell shell, Hyprland 0.56+ with Lua configuration, Quickshell with `ScreencopyView`, and Python 3. This is an Omarchy shell plugin; it uses Omarchy's theme and plugin services.
 
-Clone the repository and install it:
-
-```sh
-mkdir -p ~/Projects
-git clone https://github.com/renanmt/switch-magic.git ~/Projects/switch-magic
-cd ~/Projects/switch-magic
-python scripts/install.py
-```
-
-No build step or npm install is needed. Hold **Alt** and press **Tab** to try it.
-
-<details>
-<summary><strong>Install using Omarchy's plugin manager</strong></summary>
+Install with Omarchy's plugin manager:
 
 ```sh
 omarchy plugin add https://github.com/renanmt/switch-magic --enable
-python ~/.config/omarchy/plugins/renanmt.switch-magic/scripts/install.py
 ```
 
-The second command is required: it installs the Alt+Tab bindings with backups.
-Enabling the plugin alone does not change your keyboard shortcuts. Future code
-updates use `omarchy plugin update renanmt.switch-magic`.
+Hold **Alt** and press **Tab**. Shortcuts attach automatically when the plugin is enabled. No setup script or configuration edits are required.
 
-</details>
-
+Update with `omarchy plugin update renanmt.switch-magic`.
 
 Open preferences with **F2** while the switcher is visible, or directly:
 
@@ -65,13 +49,11 @@ omarchy-shell switch-magic settings
 ```
 
 <details>
-<summary><strong>What the installer changes</strong></summary>
+<summary><strong>How automatic shortcuts work</strong></summary>
 
-The installer links the project into `~/.config/omarchy/plugins/renanmt.switch-magic`, enables the plugin, and adds a marked block to `~/.config/hypr/bindings.lua`. Keep the project directory in place while installed.
+While enabled, Switch Magic registers its three shortcuts in Hyprland's running configuration. Disabling or removing the plugin reloads your saved Hyprland configuration, restoring Omarchy's defaults or your saved custom bindings. A watchdog also restores them if the shell stops unexpectedly (within about eight seconds).
 
-It backs up the affected configuration files in `~/.config/switch-magic/backups/`, checks Hyprland's configuration, and rolls back if installation fails. It does not modify `/usr/share/omarchy`.
-
-The three switcher shortcuts replace their existing bindings; unrelated shortcuts remain unchanged.
+New installations never edit your Hyprland configuration files. Upgrading from the old installer automatically backs up and removes its exact marked include from `~/.config/hypr/bindings.lua`. Backups are stored in `~/.config/switch-magic/backups/`. A manually modified legacy block is left untouched and reported in preferences.
 
 </details>
 
@@ -182,21 +164,11 @@ See the [development guide](docs/DEVELOPMENT.md) for isolated previews, project 
 
 ## Uninstall
 
-From the project directory:
-
 ```sh
-python scripts/install.py uninstall
-```
-
-This removes the plugin integration and restores Omarchy's original shortcuts. The project files remain on disk.
-
-If installed through `omarchy plugin add`, run the installer from its installed
-path, then remove the disabled checkout:
-
-```sh
-python ~/.config/omarchy/plugins/renanmt.switch-magic/scripts/install.py uninstall
 omarchy plugin remove renanmt.switch-magic
 ```
+
+Your saved keyboard shortcuts return automatically. To temporarily turn Switch Magic off, use `omarchy plugin disable renanmt.switch-magic`.
 
 ---
 

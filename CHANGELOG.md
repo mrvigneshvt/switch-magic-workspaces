@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0
+
+- Attach shortcuts automatically with the standard Omarchy plugin lifecycle.
+- Restore saved bindings on disable, removal, or shell heartbeat expiry.
+- Reattach after Hyprland configuration reloads.
+- Migrate the legacy marked include automatically, preserving a backup.
+
 ## 0.2.2 — First public release
 
 - Visual Alt+Tab switching above fullscreen windows, with workspace, monitor,

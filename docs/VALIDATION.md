@@ -1,5 +1,20 @@
 # Validation
 
+## Version 0.3.0
+
+Checked on Omarchy 4.0.4, Hyprland 0.56.2 and Quickshell 0.3.1:
+
+- All three physical modifier chords, hold visibility, single-step cycling,
+  release activation and restoring the previously focused window after tests.
+- Automatic reattachment after a Hyprland configuration reload.
+- Standard plugin disable and remove commands restore all five original actions
+  across Alt+Tab, Shift+Alt+Tab and Ctrl+Alt+Tab, with no configuration errors.
+- Attaching without a heartbeat expires the lease and restores saved bindings.
+- The existing marked include migrated automatically and was backed up.
+- 15 model tests, Lua lifecycle tests, 4 installer tests, 4 migration tests,
+  manifest validation, and QML parsing pass.
+
+
 ## Version 0.2.2
 
 Fresh-install regression coverage asserts exactly four built-in views and an

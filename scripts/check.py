@@ -8,8 +8,9 @@ for path in ROOT.glob('*.json'):
     json.loads(path.read_text())
 subprocess.run(['node', 'tests/model.test.cjs'], cwd=ROOT, check=True)
 subprocess.run(['lua', 'tests/bindings.test.lua'], cwd=ROOT, check=True)
-subprocess.run(['luac', '-p', 'bindings.lua'], cwd=ROOT, check=True)
+subprocess.run(['luac', '-p', 'runtime/bindings.lua'], cwd=ROOT, check=True)
 subprocess.run(['python', 'tests/installer.test.py'], cwd=ROOT, check=True)
+subprocess.run(['python', 'tests/migration.test.py'], cwd=ROOT, check=True)
 subprocess.run(['omarchy', 'plugin', 'validate', str(ROOT)], check=True)
 # qmlformat parses without executing and avoids qmllint's unresolved internal
 # Quickshell metadata warnings. Actual rendering is checked in the live host.

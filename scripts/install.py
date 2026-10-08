@@ -63,7 +63,6 @@ def main():
     was_linked = DEST.is_symlink()
     managed_checkout = DEST.exists() and not was_linked and DEST.resolve() == ROOT
     try:
-        bindings = strip_block(originals[BINDINGS])
         if args.action == 'install':
             DEST.parent.mkdir(parents=True, exist_ok=True)
             if not was_linked and not managed_checkout:
@@ -90,16 +89,10 @@ def main():
                         # File discovery and the plugin watcher can overlap.
                         # Enabling is idempotent; wait for the registry to settle.
                         time.sleep(.2)
-            # Source only our marked block; never rewrite the packaged defaults.
-            config_expr = '(os.getenv("XDG_CONFIG_HOME") or (os.getenv("HOME") .. "/.config"))'
-            block = 'dofile(' + config_expr + ' .. "/omarchy/plugins/' + PLUGIN_ID + '/bindings.lua")\n'
-            atomic(BINDINGS, bindings.rstrip() + '\n\n' + BEGIN + block + END)
         else:
-            atomic(BINDINGS, bindings)
             run('omarchy', 'plugin', 'disable', PLUGIN_ID)
             if DEST.is_symlink():
                 DEST.unlink()
-        run('hyprctl', 'reload')
         errors = run('hyprctl', 'configerrors')
         if errors:
             raise RuntimeError('Hyprland rejected the bindings: ' + errors)

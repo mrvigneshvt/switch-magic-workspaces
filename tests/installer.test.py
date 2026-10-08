@@ -45,7 +45,7 @@ class InstallerTest(unittest.TestCase):
             self.assertFalse(dest.is_symlink())
             self.assertEqual(len(list((config / 'switch-magic/backups').glob('*/bindings.lua'))), 1)
 
-    def test_managed_checkout_installs_bindings_and_uninstalls_without_deleting_source(self):
+    def test_managed_checkout_never_edits_bindings_or_deletes_source(self):
         with tempfile.TemporaryDirectory() as directory:
             config = Path(directory) / 'config'
             dest = config / 'omarchy/plugins/renanmt.switch-magic'
@@ -64,7 +64,7 @@ class InstallerTest(unittest.TestCase):
                 return 'ok'
             with patch.multiple(installer, CONFIG=config, BINDINGS=bindings, SHELL=shell, DEST=dest, ROOT=dest), patch.object(installer, 'run', side_effect=fake_run), patch.object(installer.subprocess, 'run'):
                 with patch('sys.argv', ['install.py']): installer.main()
-                self.assertIn(installer.BEGIN, bindings.read_text())
+                self.assertEqual(bindings.read_text(), 'personal bindings\n')
                 self.assertEqual(shell.read_text(), original)
                 self.assertFalse(dest.is_symlink())
                 with patch('sys.argv', ['install.py', 'uninstall']): installer.main()

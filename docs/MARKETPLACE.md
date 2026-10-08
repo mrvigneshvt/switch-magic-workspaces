@@ -18,17 +18,16 @@ _No response_
 
 Switch Magic is a visual Alt+Tab switcher with four built-in layouts, live or
 snapshot previews, and a custom view editor. Permanent plugin ID:
-`renanmt.switch-magic`. Version: `0.2.2`.
+`renanmt.switch-magic`. Version: `0.3.0`.
 
-Please mark this listing as requiring manual setup. After `omarchy plugin add
-https://github.com/renanmt/switch-magic --enable`, the user must run
-`python ~/.config/omarchy/plugins/renanmt.switch-magic/scripts/install.py` to
-install the Alt+Tab bindings. This explicitly invoked script backs up the
-configuration, adds a marked block, validates it, and rolls back on failure.
-Removing the bindings before removing the plugin is documented in the README.
+No manual setup is needed in 0.3.0. Standard plugin enable attaches runtime
+shortcuts; disable/removal restores saved bindings by reloading Hyprland's
+configuration. A heartbeat lease restores bindings after an unexpected shell exit.
+The migration helper removes only the exact legacy marked include with a backup.
+See `runtime/bindings.lua` and `components/AutomaticBindings.qml` for the lifecycle.
 
 Requires Omarchy 4 with Quickshell and Hyprland 0.56+ Lua configuration, plus
-Python 3 for shortcut setup. The plugin captures Wayland toplevels, focuses the
+Python 3 for legacy configuration migration. The plugin captures Wayland toplevels, focuses the
 selected window through Hyprland, and saves only its inline shell settings.
 It does not write window captures to disk or request elevated privileges.
 
