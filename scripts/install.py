@@ -8,6 +8,8 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+import tempfile
+import stat
 
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG = Path(os.environ.get('XDG_CONFIG_HOME', Path.home() / '.config'))
@@ -32,11 +34,20 @@ def strip_block(text):
         raise RuntimeError('Incomplete Switch Magic block; refusing to alter bindings.lua')
     return before + rest.split(END, 1)[1]
 
-def atomic(path, text):
+def atomic(path, text, mode):
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name + '.switch-magic-tmp')
-    tmp.write_text(text)
-    tmp.replace(path)
+    # mkstemp creates an exclusive 0600 file, including under umask 000.
+    fd, name = tempfile.mkstemp(dir=path.parent, prefix='.switch-magic-')
+    tmp = Path(name)
+    try:
+        with os.fdopen(fd, 'w') as file:
+            file.write(text)
+            file.flush()
+            os.fchmod(file.fileno(), mode)
+        tmp.replace(path)
+    finally:
+        tmp.unlink(missing_ok=True)
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -54,12 +65,15 @@ def main():
     if args.action == 'install':
         run('omarchy', 'plugin', 'validate', str(ROOT))
     originals = {p: p.read_text() if p.exists() else None for p in [BINDINGS, SHELL]}
+    modes = {p: stat.S_IMODE(p.stat().st_mode) for p, content in originals.items() if content is not None}
     stamp = datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f')
     backup = CONFIG / 'switch-magic/backups' / stamp
-    backup.mkdir(parents=True)
+    backup.mkdir(parents=True, mode=0o700)
     for path, content in originals.items():
         if content is not None:
-            (backup / path.name).write_text(content)
+            fd = os.open(backup / path.name, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(fd, 'w') as file:
+                file.write(content)
     was_linked = DEST.is_symlink()
     managed_checkout = DEST.exists() and not was_linked and DEST.resolve() == ROOT
     try:
@@ -115,7 +129,7 @@ def main():
             if content is None:
                 path.unlink(missing_ok=True)
             else:
-                atomic(path, content)
+                atomic(path, content, modes[path])
         if not was_linked and DEST.is_symlink():
             DEST.unlink()
         elif was_linked and not DEST.exists():

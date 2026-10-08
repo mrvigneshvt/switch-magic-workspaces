@@ -285,7 +285,7 @@ Rectangle {
                     Text { anchors.horizontalCenter: parent.horizontalCenter; text: "@renanmt"; color: root.themeColors.accent; font.family: root.fontFamily; font.pixelSize: 14 }
                 }
             }
-            Text { width: parent.width; horizontalAlignment: Text.AlignHCenter; text: "Version 0.3.0  ·  Made for Omarchy  ·  MIT License"; color: root.themeColors.muted; font.family: root.fontFamily; font.pixelSize: 11 }
+            Text { width: parent.width; horizontalAlignment: Text.AlignHCenter; text: "Version 0.3.1  ·  Made for Omarchy  ·  MIT License"; color: root.themeColors.muted; font.family: root.fontFamily; font.pixelSize: 11 }
         }
     }
     Rectangle { anchors.bottom: parent.bottom; anchors.bottomMargin: 50; width: parent.width; height: 1; color: Qt.alpha(root.themeColors.text, .08) }

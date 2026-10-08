@@ -4,6 +4,7 @@ import datetime
 import os
 from pathlib import Path
 import tempfile
+import stat
 
 BEGIN = '-- BEGIN SWITCH MAGIC\n'
 END = '-- END SWITCH MAGIC\n'
@@ -15,6 +16,7 @@ def migrate(config):
     path = (config / 'hypr/bindings.lua').resolve()
     if not path.exists():
         return False
+    mode = stat.S_IMODE(path.stat().st_mode)
     original = path.read_text()
     if BEGIN not in original:
         return False
@@ -25,13 +27,15 @@ def migrate(config):
     if block not in BLOCKS or BEGIN in after:
         raise RuntimeError('The old Switch Magic block was customized; left unchanged.')
     backup = config / 'switch-magic/backups' / datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f-auto-bindings')
-    backup.mkdir(parents=True)
-    (backup / 'bindings.lua').write_text(original)
+    backup.mkdir(parents=True, mode=0o700)
+    fd = os.open(backup / 'bindings.lua', os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, 'w') as file:
+        file.write(original)
     with tempfile.NamedTemporaryFile(mode='w', dir=path.parent, prefix='.switch-magic-', delete=False) as file:
         temporary = Path(file.name)
         file.write(before + after)
     try:
-        temporary.chmod(path.stat().st_mode & 0o777)
+        temporary.chmod(mode)
         temporary.replace(path)
     finally:
         temporary.unlink(missing_ok=True)

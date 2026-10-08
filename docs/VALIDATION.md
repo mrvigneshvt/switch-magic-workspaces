@@ -1,5 +1,16 @@
 # Validation
 
+## Version 0.3.1
+
+Regression tests reproduce the reviewer's umask 022 case: migration backups
+remain 0600 inside a 0700 directory and the original remains 0600. Migration
+also passes under umask 000. Simulated installer failure restores both file
+contents and the original 0600/0640 modes even after intermediate mode changes.
+Atomic rollback is separately checked under umask 000. All 15 model tests, Lua
+lifecycle tests, 5 installer tests, 5 migration tests, manifest validation, and
+QML parsing pass.
+
+
 ## Version 0.3.0
 
 Checked on Omarchy 4.0.4, Hyprland 0.56.2 and Quickshell 0.3.1:

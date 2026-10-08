@@ -1,4 +1,6 @@
 """Installer text edits and rollback without touching the actual desktop."""
+import os
+import stat
 import importlib.util
 from pathlib import Path
 import tempfile
@@ -30,20 +32,47 @@ class InstallerTest(unittest.TestCase):
             shell.parent.mkdir(parents=True)
             bindings.write_text('personal bindings\n')
             shell.write_text('{"plugins":[]}\n')
+            bindings.chmod(0o600)
+            shell.chmod(0o640)
             def fake_run(*args):
                 if args[0] == 'hyprctl': return ''
                 if args[-1] == 'listPlugins': return '[{"id":"renanmt.switch-magic","enabled":false}]'
                 if args[:3] == ('omarchy','plugin','enable'):
                     shell.write_text('partially changed')
+                    shell.chmod(0o644)
+                    bindings.chmod(0o644)
                     raise RuntimeError('simulated enable failure')
                 return 'ok'
             with patch.multiple(installer, CONFIG=config, BINDINGS=bindings, SHELL=shell, DEST=dest, ROOT=root), patch.object(installer, 'run', side_effect=fake_run), patch.object(installer.subprocess, 'run'), patch('sys.argv', ['install.py']):
                 with self.assertRaisesRegex(RuntimeError, 'simulated enable failure'):
-                    installer.main()
+                    previous_umask = os.umask(0o022)
+                    try:
+                        installer.main()
+                    finally:
+                        os.umask(previous_umask)
             self.assertEqual(bindings.read_text(), 'personal bindings\n')
             self.assertEqual(shell.read_text(), '{"plugins":[]}\n')
+            self.assertEqual(stat.S_IMODE(bindings.stat().st_mode), 0o600)
+            self.assertEqual(stat.S_IMODE(shell.stat().st_mode), 0o640)
+            for backup in (config / 'switch-magic/backups').glob('*'):
+                self.assertEqual(stat.S_IMODE(backup.stat().st_mode), 0o700)
+                for file in backup.iterdir():
+                    self.assertEqual(stat.S_IMODE(file.stat().st_mode), 0o600)
             self.assertFalse(dest.is_symlink())
             self.assertEqual(len(list((config / 'switch-magic/backups').glob('*/bindings.lua'))), 1)
+
+    def test_atomic_restore_preserves_mode_under_open_umask(self):
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/'settings'
+            path.write_text('changed');path.chmod(0o644)
+            previous=os.umask(0)
+            try:
+                installer.atomic(path, 'original', 0o600)
+            finally:
+                os.umask(previous)
+            self.assertEqual(path.read_text(),'original')
+            self.assertEqual(stat.S_IMODE(path.stat().st_mode),0o600)
+            self.assertEqual(list(Path(d).iterdir()),[path])
 
     def test_managed_checkout_never_edits_bindings_or_deletes_source(self):
         with tempfile.TemporaryDirectory() as directory:

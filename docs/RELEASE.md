@@ -1,12 +1,12 @@
-# Switch Magic v0.3.0
+# Switch Magic v0.3.1
 
-Install. Hold Alt. Switch.
+Fixes the backup permissions issue found during marketplace review.
 
-- Standard Omarchy installation now attaches all three shortcuts automatically.
-- Disabling or removing the plugin restores your saved Hyprland bindings.
-- Automatic recovery after configuration reloads and a watchdog for shell exits.
-- Existing installations migrate their old marked include automatically, with a backup.
-- All four layouts, custom views, live previews, and theme integration remain available.
+- Configuration backups are private from creation: directories 0700, files 0600.
+- Installer rollback preserves original file permissions using exclusive temporary files.
+- Regression tests cover restrictive originals, failed installation, and permissive umasks.
+
+Automatic shortcuts and standard Omarchy installation continue to work as in 0.3.0:
 
 ```sh
 omarchy plugin add https://github.com/renanmt/switch-magic --enable
@@ -14,4 +14,4 @@ omarchy plugin add https://github.com/renanmt/switch-magic --enable
 
 Existing users: `omarchy plugin update renanmt.switch-magic`.
 
-Remove with `omarchy plugin remove renanmt.switch-magic`. No setup or cleanup script needed.
+Disable or uninstall restores saved shortcuts automatically.

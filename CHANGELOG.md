@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1
+
+- Create configuration backup directories with mode 0700 and backup files with mode 0600.
+- Preserve original file permissions during installer rollback using exclusive temporary files.
+- Add regression coverage for restrictive originals and permissive process umasks.
+
+
 ## 0.3.0
 
 - Attach shortcuts automatically with the standard Omarchy plugin lifecycle.

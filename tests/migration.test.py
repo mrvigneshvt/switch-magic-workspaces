@@ -1,3 +1,5 @@
+import os
+import stat
 import importlib.util
 from pathlib import Path
 import tempfile
@@ -17,6 +19,23 @@ class MigrationTest(unittest.TestCase):
                 self.assertEqual(p.stat().st_mode & 0o777,0o640)
                 self.assertEqual(next((config/'switch-magic/backups').glob('*/bindings.lua')).read_text(),original)
                 self.assertFalse(m.migrate(config))
+    def test_backups_are_private_under_permissive_umasks(self):
+        for mask in [0o022, 0o000]:
+            with self.subTest(umask=oct(mask)), tempfile.TemporaryDirectory() as d:
+                config=Path(d); p=config/'hypr/bindings.lua';p.parent.mkdir()
+                original=m.BEGIN+next(iter(m.BLOCKS))+m.END
+                p.write_text(original);p.chmod(0o600)
+                previous=os.umask(mask)
+                try:
+                    self.assertTrue(m.migrate(config))
+                finally:
+                    os.umask(previous)
+                backup=next((config/'switch-magic/backups').glob('*/bindings.lua'))
+                self.assertEqual(backup.read_text(),original)
+                self.assertEqual(stat.S_IMODE(backup.stat().st_mode),0o600)
+                self.assertEqual(stat.S_IMODE(backup.parent.stat().st_mode),0o700)
+                self.assertEqual(stat.S_IMODE(p.stat().st_mode),0o600)
+
     def test_custom_or_incomplete_blocks_are_untouched(self):
         for text in [m.BEGIN+'custom\n'+m.END,m.BEGIN+'incomplete',m.BEGIN+next(iter(m.BLOCKS))+m.END+m.BEGIN]:
             with tempfile.TemporaryDirectory() as d:
