@@ -1,5 +1,13 @@
 # Validation
 
+## Version 0.3.2
+
+All checks pass, including 6 installer and 6 migration tests. New regression
+cases create legacy 0755 directories and 0644 full-configuration backups, then
+verify automatic tightening even with clean/missing bindings or a failed
+installer preflight. Backup contents and external symlink targets remain unchanged.
+
+
 ## Version 0.3.1
 
 Regression tests reproduce the reviewer's umask 022 case: migration backups

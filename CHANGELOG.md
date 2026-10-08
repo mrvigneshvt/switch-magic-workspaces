@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.2
+
+- Automatically restrict existing backup directories to 0700 and files to 0600 before any migration early return or installer preflight.
+- Leave symlink targets outside the backup tree untouched.
+- Cover upgrades with an already migrated or missing bindings file and failed installer preflight.
+
+
 ## 0.3.1
 
 - Create configuration backup directories with mode 0700 and backup files with mode 0600.

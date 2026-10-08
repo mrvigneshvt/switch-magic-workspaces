@@ -18,9 +18,9 @@ _No response_
 
 Switch Magic is a visual Alt+Tab switcher with four built-in layouts, live or
 snapshot previews, and a custom view editor. Permanent plugin ID:
-`renanmt.switch-magic`. Version: `0.3.1`.
+`renanmt.switch-magic`. Version: `0.3.2`.
 
-No manual setup is needed in 0.3.1. Standard plugin enable attaches runtime
+No manual setup is needed in 0.3.2. Standard plugin enable attaches runtime
 shortcuts; disable/removal restores saved bindings by reloading Hyprland's
 configuration. A heartbeat lease restores bindings after an unexpected shell exit.
 The migration helper removes only the exact legacy marked include with a backup.

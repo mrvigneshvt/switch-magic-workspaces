@@ -1,5 +1,6 @@
 """Installer text edits and rollback without touching the actual desktop."""
 import os
+import sys
 import stat
 import importlib.util
 from pathlib import Path
@@ -7,6 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 spec = importlib.util.spec_from_file_location('installer', Path(__file__).resolve().parents[1] / 'scripts/install.py')
 installer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(installer)
@@ -73,6 +75,17 @@ class InstallerTest(unittest.TestCase):
             self.assertEqual(path.read_text(),'original')
             self.assertEqual(stat.S_IMODE(path.stat().st_mode),0o600)
             self.assertEqual(list(Path(d).iterdir()),[path])
+
+    def test_old_backups_secured_before_install_preflight(self):
+        with tempfile.TemporaryDirectory() as d:
+            config=Path(d);backup=config/'switch-magic/backups/legacy'
+            backup.mkdir(parents=True);backup.chmod(0o755)
+            file=backup/'shell.json';file.write_text('private');file.chmod(0o644)
+            with patch.multiple(installer, CONFIG=config, BINDINGS=config/'missing'), patch('sys.argv',['install.py']):
+                with self.assertRaises(RuntimeError):installer.main()
+            self.assertEqual(stat.S_IMODE(backup.stat().st_mode),0o700)
+            self.assertEqual(stat.S_IMODE(file.stat().st_mode),0o600)
+            self.assertEqual(file.read_text(),'private')
 
     def test_managed_checkout_never_edits_bindings_or_deletes_source(self):
         with tempfile.TemporaryDirectory() as directory:

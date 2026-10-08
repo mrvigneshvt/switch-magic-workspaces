@@ -10,6 +10,7 @@ import sys
 import time
 import tempfile
 import stat
+from private_backups import secure_existing_backups
 
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG = Path(os.environ.get('XDG_CONFIG_HOME', Path.home() / '.config'))
@@ -53,6 +54,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action', choices=['install', 'uninstall'], nargs='?', default='install')
     args = parser.parse_args()
+    secure_existing_backups(CONFIG)
     if not BINDINGS.is_file():
         raise RuntimeError('Omarchy 4 / Hyprland Lua bindings.lua is required')
     if DEST.exists() or DEST.is_symlink():

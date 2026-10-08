@@ -1,9 +1,11 @@
 import os
+import sys
 import stat
 import importlib.util
 from pathlib import Path
 import tempfile
 import unittest
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 spec = importlib.util.spec_from_file_location('migration', Path(__file__).resolve().parents[1] / 'scripts/migrate-bindings.py')
 m = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(m)
@@ -35,6 +37,28 @@ class MigrationTest(unittest.TestCase):
                 self.assertEqual(stat.S_IMODE(backup.stat().st_mode),0o600)
                 self.assertEqual(stat.S_IMODE(backup.parent.stat().st_mode),0o700)
                 self.assertEqual(stat.S_IMODE(p.stat().st_mode),0o600)
+
+    def test_old_backups_secured_even_without_legacy_bindings(self):
+        for bindings in [None, '-- clean config\n']:
+            with self.subTest(bindings=bindings), tempfile.TemporaryDirectory() as d:
+                config=Path(d); backup=config/'switch-magic/backups/old'
+                backup.mkdir(parents=True);backup.chmod(0o755)
+                backup.parent.chmod(0o755)
+                files=[backup/'bindings.lua',backup/'shell.json']
+                for file in files:
+                    file.write_text('private original');file.chmod(0o644)
+                outside=config/'outside';outside.write_text('untouched');outside.chmod(0o644)
+                (backup/'link').symlink_to(outside)
+                if bindings is not None:
+                    path=config/'hypr/bindings.lua';path.parent.mkdir();path.write_text(bindings)
+                self.assertFalse(m.migrate(config))
+                for directory in [backup,backup.parent]:
+                    self.assertEqual(stat.S_IMODE(directory.stat().st_mode),0o700)
+                for file in files:
+                    self.assertEqual(stat.S_IMODE(file.stat().st_mode),0o600)
+                    self.assertEqual(file.read_text(),'private original')
+                self.assertEqual(stat.S_IMODE(outside.stat().st_mode),0o644)
+                self.assertFalse(m.migrate(config))
 
     def test_custom_or_incomplete_blocks_are_untouched(self):
         for text in [m.BEGIN+'custom\n'+m.END,m.BEGIN+'incomplete',m.BEGIN+next(iter(m.BLOCKS))+m.END+m.BEGIN]:

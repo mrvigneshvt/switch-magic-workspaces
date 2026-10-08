@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import tempfile
 import stat
+from private_backups import secure_existing_backups
 
 BEGIN = '-- BEGIN SWITCH MAGIC\n'
 END = '-- END SWITCH MAGIC\n'
@@ -13,6 +14,7 @@ BLOCKS = {f'dofile({EXPRESSION} .. "/omarchy/plugins/{name}/bindings.lua")\n'
           for name in ['local.switch-magic', 'renanmt.switch-magic']}
 
 def migrate(config):
+    secure_existing_backups(config)
     path = (config / 'hypr/bindings.lua').resolve()
     if not path.exists():
         return False
