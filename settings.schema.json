@@ -1,0 +1,522 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "const": "renanmt.switch-magic"
+    },
+    "version": {
+      "const": 2
+    },
+    "behavior": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "includeSpecial": {
+          "type": "boolean"
+        },
+        "hoverSelect": {
+          "type": "boolean"
+        }
+      }
+    },
+    "profiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workspace": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "view": {
+              "type": "string",
+              "description": "Built-in id or a custom view id"
+            },
+            "preview": {
+              "enum": [
+                "view",
+                "live",
+                "snapshot",
+                "hybrid",
+                "icon"
+              ]
+            }
+          }
+        },
+        "monitor": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "view": {
+              "type": "string",
+              "description": "Built-in id or a custom view id"
+            },
+            "preview": {
+              "enum": [
+                "view",
+                "live",
+                "snapshot",
+                "hybrid",
+                "icon"
+              ]
+            }
+          }
+        },
+        "all": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "view": {
+              "type": "string",
+              "description": "Built-in id or a custom view id"
+            },
+            "preview": {
+              "enum": [
+                "view",
+                "live",
+                "snapshot",
+                "hybrid",
+                "icon"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "customViews": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,79}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "engine": {
+            "enum": [
+              "list",
+              "grid",
+              "carousel",
+              "fan"
+            ],
+            "description": "Layout engine"
+          },
+          "geometry": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "width": {
+                "type": "integer",
+                "minimum": 320,
+                "maximum": 2400,
+                "description": "Stage width (px)"
+              },
+              "cardWidth": {
+                "type": "integer",
+                "minimum": 100,
+                "maximum": 1000,
+                "description": "Tile width (px)"
+              },
+              "cardHeight": {
+                "type": "integer",
+                "minimum": 64,
+                "maximum": 600,
+                "description": "Tile height (px)"
+              },
+              "gap": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 80,
+                "description": "Gap (px)"
+              },
+              "maxVisible": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 15,
+                "description": "Visible tiles"
+              },
+              "columns": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 8,
+                "description": "Maximum columns"
+              },
+              "rows": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 8,
+                "description": "Maximum rows"
+              },
+              "spread": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 600,
+                "description": "Card spread (px)"
+              },
+              "angle": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 25,
+                "description": "Fan angle (°)"
+              },
+              "depth": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Depth offset (px)"
+              },
+              "inactiveScale": {
+                "type": "number",
+                "minimum": 0.4,
+                "maximum": 1,
+                "description": "Unselected scale"
+              },
+              "inactiveOpacity": {
+                "type": "number",
+                "minimum": 0.1,
+                "maximum": 1,
+                "description": "Unselected opacity"
+              }
+            },
+            "required": [
+              "width",
+              "cardWidth",
+              "cardHeight",
+              "gap",
+              "maxVisible",
+              "columns",
+              "rows",
+              "spread",
+              "angle",
+              "depth",
+              "inactiveScale",
+              "inactiveOpacity"
+            ]
+          },
+          "card": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "radius": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 48,
+                "description": "Corner radius (px)"
+              },
+              "borderWidth": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 8,
+                "description": "Border thickness (px)"
+              },
+              "selectedBorderWidth": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 8,
+                "description": "Selected border (px)"
+              },
+              "borderOpacity": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Border opacity"
+              },
+              "surfaceOpacity": {
+                "type": "number",
+                "minimum": 0.1,
+                "maximum": 1,
+                "description": "Surface opacity"
+              },
+              "tintOpacity": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 0.6,
+                "description": "Accent wash"
+              },
+              "padding": {
+                "type": "integer",
+                "minimum": 4,
+                "maximum": 32,
+                "description": "Inner padding (px)"
+              },
+              "shadowEnabled": {
+                "type": "boolean",
+                "description": "Shadows"
+              },
+              "shadowSize": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 32,
+                "description": "Shadow spread (px)"
+              },
+              "shadowOpacity": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 0.3,
+                "description": "Shadow opacity"
+              },
+              "fontFamily": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80,
+                "description": "Font family"
+              },
+              "titleSize": {
+                "type": "integer",
+                "minimum": 8,
+                "maximum": 32,
+                "description": "Title size (px)"
+              },
+              "subtitleSize": {
+                "type": "integer",
+                "minimum": 8,
+                "maximum": 24,
+                "description": "App name size (px)"
+              },
+              "titleWeight": {
+                "enum": [
+                  "normal",
+                  "medium",
+                  "semibold",
+                  "bold"
+                ],
+                "description": "Title weight"
+              },
+              "textSpacing": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 16,
+                "description": "Label spacing (px)"
+              },
+              "footerHeight": {
+                "type": "integer",
+                "minimum": 32,
+                "maximum": 140,
+                "description": "Label area height (px)"
+              },
+              "showTitle": {
+                "type": "boolean",
+                "description": "Window title"
+              },
+              "showSubtitle": {
+                "type": "boolean",
+                "description": "Application name"
+              },
+              "showWorkspace": {
+                "type": "boolean",
+                "description": "Workspace badge"
+              },
+              "showIcon": {
+                "type": "boolean",
+                "description": "App icon beside title"
+              },
+              "iconSize": {
+                "type": "integer",
+                "minimum": 16,
+                "maximum": 64,
+                "description": "App icon size (px)"
+              },
+              "previewIconSize": {
+                "type": "integer",
+                "minimum": 24,
+                "maximum": 160,
+                "description": "Fallback icon size (px)"
+              },
+              "compactPreviewWidth": {
+                "type": "integer",
+                "minimum": 40,
+                "maximum": 260,
+                "description": "List preview width (px)"
+              },
+              "showPreviewBadge": {
+                "type": "boolean",
+                "description": "Live / still badge"
+              }
+            },
+            "required": [
+              "radius",
+              "borderWidth",
+              "selectedBorderWidth",
+              "borderOpacity",
+              "surfaceOpacity",
+              "tintOpacity",
+              "padding",
+              "shadowEnabled",
+              "shadowSize",
+              "shadowOpacity",
+              "fontFamily",
+              "titleSize",
+              "subtitleSize",
+              "titleWeight",
+              "textSpacing",
+              "footerHeight",
+              "showTitle",
+              "showSubtitle",
+              "showWorkspace",
+              "showIcon",
+              "iconSize",
+              "previewIconSize",
+              "compactPreviewWidth",
+              "showPreviewBadge"
+            ]
+          },
+          "preview": {
+            "enum": [
+              "live",
+              "snapshot",
+              "hybrid",
+              "icon"
+            ],
+            "description": "Default preview"
+          },
+          "animation": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "description": "Animations"
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000,
+                "description": "Transition duration (ms)"
+              },
+              "easing": {
+                "enum": [
+                  "outCubic",
+                  "outQuint",
+                  "outBack",
+                  "linear"
+                ],
+                "description": "Easing"
+              },
+              "position": {
+                "type": "boolean",
+                "description": "Animate positions"
+              },
+              "scale": {
+                "type": "boolean",
+                "description": "Animate scaling"
+              },
+              "rotation": {
+                "type": "boolean",
+                "description": "Animate rotation"
+              },
+              "opacity": {
+                "type": "boolean",
+                "description": "Animate opacity"
+              },
+              "entryDuration": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000,
+                "description": "Entrance duration (ms)"
+              },
+              "entryScale": {
+                "type": "number",
+                "minimum": 0.6,
+                "maximum": 1,
+                "description": "Entrance scale"
+              }
+            },
+            "required": [
+              "enabled",
+              "duration",
+              "easing",
+              "position",
+              "scale",
+              "rotation",
+              "opacity",
+              "entryDuration",
+              "entryScale"
+            ]
+          },
+          "scene": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "accent": {
+                "type": "string",
+                "pattern": "^(theme|#[0-9a-fA-F]{6})$",
+                "description": "Accent color"
+              },
+              "dimOpacity": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Backdrop dimming"
+              },
+              "headerSize": {
+                "type": "integer",
+                "minimum": 12,
+                "maximum": 32,
+                "description": "Logo text size (px)"
+              },
+              "headerTracking": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 10,
+                "description": "Logo letter spacing (px)"
+              },
+              "logoSize": {
+                "type": "integer",
+                "minimum": 16,
+                "maximum": 48,
+                "description": "Logo icon size (px)"
+              },
+              "showHints": {
+                "type": "boolean",
+                "description": "Keyboard hints"
+              }
+            },
+            "required": [
+              "accent",
+              "dimOpacity",
+              "headerSize",
+              "headerTracking",
+              "logoSize",
+              "showHints"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "engine",
+          "geometry",
+          "card",
+          "preview",
+          "animation",
+          "scene"
+        ]
+      }
+    },
+    "views": {
+      "type": "null",
+      "description": "Built-in templates are read-only and loaded from defaults.json."
+    },
+    "layouts": {
+      "type": "null",
+      "description": "Obsolete v1 field."
+    },
+    "appearance": {
+      "type": "null",
+      "description": "Obsolete v1 field; appearance belongs to each view."
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Switch Magic 0.2 settings",
+  "description": "Inline settings for the renanmt.switch-magic plugin. Custom views carry their complete definition. Built-in views cannot be overwritten."
+}

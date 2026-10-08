@@ -1,0 +1,11 @@
+{
+  "name": "switch-magic",
+  "version": "0.2.2",
+  "private": true,
+  "description": "An Omarchy window switcher with declarative layouts and live previews",
+  "scripts": {
+    "test": "node tests/model.test.cjs && lua tests/bindings.test.lua",
+    "check": "python scripts/check.py"
+  },
+  "author": "Renan Tonheiro (@renanmt)"
+}
