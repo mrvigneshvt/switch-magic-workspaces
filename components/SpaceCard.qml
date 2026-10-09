@@ -38,25 +38,44 @@ Item {
             ClippingRectangle {
                 required property int index
                 readonly property var windowInfo: root.windows[index]
+                readonly property var desktopEntry: DesktopEntries.heuristicLookup(windowInfo.appId || "")
+                readonly property string appName: desktopEntry ? desktopEntry.name : windowInfo.appId || "Application"
+                readonly property string appIcon: desktopEntry && desktopEntry.icon ? Quickshell.iconPath(desktopEntry.icon, true) : ""
                 width: (previewGrid.width - 5) / 2
                 height: (previewGrid.height - 5) / 2
                 x: (index % 2) * (width + 5)
                 y: Math.floor(index / 2) * (height + 5)
                 radius: 5
                 color: Qt.alpha(root.themeColors.text, 0.05)
-                ScreencopyView {
-                    id: screenshot
+                Loader {
+                    id: captureLoader
                     anchors.fill: parent
-                    captureSource: root.captureFor(windowInfo.address)
-                    live: root.previewMode === "live" || (root.previewMode === "hybrid" && root.selected)
-                    constraintSize: Qt.size(parent.width, parent.height)
-                    paintCursor: false
+                    active: root.previewMode !== "icon"
+                    sourceComponent: Component {
+                        ScreencopyView {
+                            captureSource: root.captureFor(windowInfo.address)
+                            live: root.previewMode === "live" || (root.previewMode === "hybrid" && root.selected)
+                            constraintSize: Qt.size(parent.width, parent.height)
+                            paintCursor: false
+                        }
+                    }
                 }
-                Rectangle {
+                Item {
                     anchors.fill: parent
-                    visible: !screenshot.hasContent
-                    color: Qt.alpha(root.themeColors.accent, 0.08)
-                    Text { anchors.centerIn: parent; text: (windowInfo.appId || "•").slice(0, 1).toUpperCase(); color: root.themeColors.accent; font.pixelSize: 18 }
+                    visible: root.previewMode === "icon" || !captureLoader.item || !captureLoader.item.hasContent
+                    Rectangle { anchors.fill: parent; color: Qt.alpha(root.themeColors.accent, 0.08) }
+                    Rectangle {
+                        id: iconTile
+                        width: Math.min(root.style.previewIconSize, parent.width - 8, parent.height - 8)
+                        height: width
+                        radius: width * 0.26
+                        anchors.centerIn: parent
+                        color: Qt.alpha(root.themeColors.accent, 0.10)
+                        border.width: 1
+                        border.color: Qt.alpha(root.themeColors.accent, 0.14)
+                        Image { id: appIconImage; anchors.centerIn: parent; width: parent.width * 0.62; height: width; source: windowInfo.appIcon; fillMode: Image.PreserveAspectFit; visible: status === Image.Ready }
+                        Text { anchors.centerIn: parent; visible: !appIconImage.visible; text: windowInfo.appName.slice(0, 1).toUpperCase(); color: root.themeColors.accent; font.pixelSize: Math.max(12, parent.width * 0.43); font.family: root.fontFamily }
+                    }
                 }
             }
         }
