@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Add a workspace-first overview with per-workspace window previews and a dedicated shortcut.
+- Honor the Icons only preview mode in workspace cards by showing app icons instead of captured windows.
 - Make Alt+Tab open the workspace overview and Ctrl+Super+Tab switch windows on the current workspace.
 - Add a preference to show or hide the picker logo and wordmark.
 
