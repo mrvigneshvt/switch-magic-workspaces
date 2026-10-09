@@ -139,7 +139,7 @@ Rectangle {
             Flow {
                 width: parent.width; spacing: 8
                 Repeater {
-                    model: [{id: "workspace", title: "Workspace · Alt Tab"}, {id: "monitor", title: "Monitor · Shift Alt Tab"}, {id: "all", title: "Everywhere · Ctrl Alt Tab"}, {id: "spaces", title: "Spaces · Ctrl Super Tab"}]
+                    model: [{id: "workspace", title: "Workspace · Ctrl Super Tab"}, {id: "monitor", title: "Monitor · Shift Alt Tab"}, {id: "all", title: "Everywhere · Ctrl Alt Tab"}, {id: "spaces", title: "Spaces · Alt Tab"}]
                     MagicButton { required property var modelData; text: modelData.title; chosen: root.selectedScope === modelData.id; accent: root.themeColors.accent; foreground: root.themeColors.text; fontFamily: root.fontFamily; onClicked: root.selectedScope = modelData.id }
                 }
             }

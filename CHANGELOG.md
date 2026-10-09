@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Add a workspace-first overview with per-workspace window previews and a dedicated shortcut.
+- Make Alt+Tab open the workspace overview and Ctrl+Super+Tab switch windows on the current workspace.
 - Add a preference to show or hide the picker logo and wordmark.
 
 ## 0.3.2

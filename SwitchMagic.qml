@@ -18,6 +18,7 @@ Item {
     property bool opened: false
     property bool editing: false
     property bool demo: false
+    property bool commitOnModifierRelease: false
     property string scope: "workspace"
     property var rows: []
     property int selected: 0
@@ -125,7 +126,7 @@ Item {
         var monitor = Hyprland.focusedMonitor;
         return Quickshell.screens.find(function(s) { return monitor && s.name === monitor.name; }) || Quickshell.screens[0];
     }
-    function begin(nextScope) {
+    function begin(nextScope, modifierRelease) {
         if (!ready || editing) return;
         if (opened && scope === nextScope) { step(1); return; }
         if (!opened) {
@@ -134,7 +135,7 @@ Item {
             context = { monitorId: monitor ? monitor.id : -1, workspaceId: workspace ? workspace.id : -1 };
             displayScreen = screenForFocus();
         }
-        demo = false; overrideLayout = ""; scope = nextScope;
+        demo = false; overrideLayout = ""; scope = nextScope; commitOnModifierRelease = !!modifierRelease;
         if (scope === "spaces") {
             rows = Model.selectWorkspaces(allWorkspaces(), context.monitorId);
             selected = Math.max(0, rows.findIndex(function(workspace) { return workspace.active; }));
@@ -149,7 +150,7 @@ Item {
         if (!opened || editing || !rows.length) return;
         selected = Model.wrap(selected + delta, rows.length);
     }
-    function close() { if (editing && preferencesLoader.item && !preferencesLoader.item.prepareClose()) return; opened = false; editing = false; demo = false; rows = []; overrideLayout = ""; }
+    function close() { if (editing && preferencesLoader.item && !preferencesLoader.item.prepareClose()) return; opened = false; editing = false; demo = false; commitOnModifierRelease = false; rows = []; overrideLayout = ""; }
     function commit() {
         if (!opened || editing || demo) return;
         if (scope === "spaces") {
@@ -224,10 +225,10 @@ Item {
         active: root.registerShortcuts
         sourceComponent: Component {
             Item {
-    GlobalShortcut { appid: "switch-magic"; name: "workspace"; description: "Switch Magic: current workspace"; onPressed: root.begin("workspace") }
     GlobalShortcut { appid: "switch-magic"; name: "monitor"; description: "Switch Magic: current monitor"; onPressed: root.begin("monitor") }
     GlobalShortcut { appid: "switch-magic"; name: "all"; description: "Switch Magic: all workspaces"; onPressed: root.begin("all") }
     GlobalShortcut { appid: "switch-magic"; name: "spaces"; description: "Switch Magic: workspace overview"; onPressed: root.begin("spaces") }
+    GlobalShortcut { appid: "switch-magic"; name: "workspace-chord"; description: "Switch Magic: current workspace"; onPressed: root.begin("workspace", true) }
     GlobalShortcut { appid: "switch-magic"; name: "commit"; description: "Switch Magic: release Alt"; onPressed: root.commit() }
             }
         }
@@ -275,14 +276,14 @@ Item {
                 else if (!root.editing && event.key === Qt.Key_Tab) {
                     // Hyprland owns all Alt+Tab chords. Handling the same
                     // key here can advance twice as the layer gains focus.
-                    if (!(event.modifiers & Qt.AltModifier) && root.scope !== "spaces") root.step(1);
+                    if (!(event.modifiers & (Qt.AltModifier | Qt.ControlModifier | Qt.MetaModifier))) root.step(1);
                 }
                 event.accepted = !root.editing || event.key === Qt.Key_Escape;
             }
             Keys.onReleased: function(event) {
                 // Alt release is owned by bindings.lua, including dual-Alt.
                 // Consuming here prevents keys leaking into the underlying app.
-                if (root.scope === "spaces" && (event.key === Qt.Key_Control || event.key === Qt.Key_Meta)) root.commit();
+                if (root.commitOnModifierRelease && (event.key === Qt.Key_Control || event.key === Qt.Key_Meta)) root.commit();
                 event.accepted = true;
             }
             Item {

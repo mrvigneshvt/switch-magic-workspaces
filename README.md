@@ -4,7 +4,7 @@
     <img src="docs/images/logo-light.svg" alt="Switch Magic" width="440">
   </picture>
   <p><strong>A little magic between windows.</strong></p>
-  <p>A visual Alt+Tab switcher for Omarchy.<br>Hold Alt. Find your window. Release to land.</p>
+  <p>A visual workspace and window switcher for Omarchy.<br>Browse a space or window, then release to switch.</p>
   <p>
     <img alt="Made for Omarchy" src="https://img.shields.io/badge/Omarchy-4-8586df?style=flat-square">
     <img alt="Wayland and Hyprland" src="https://img.shields.io/badge/Wayland-Hyprland-202431?style=flat-square">
@@ -61,22 +61,22 @@ New installations never edit your Hyprland configuration files. Upgrading from t
 
 | Shortcut | Windows to browse | Default view | Default previews |
 | :--- | :--- | :--- | :--- |
-| **Alt + Tab** | Current workspace | Carousel | Live |
+| **Alt + Tab** | Workspaces on the focused monitor | Grid | Live selection |
 | **Shift + Alt + Tab** | Every workspace on the focused monitor | Hand of cards | Snapshot |
 | **Ctrl + Alt + Tab** | Every workspace on every monitor | Grid | Live selection |
-| **Ctrl + Super + Tab** | Workspaces on the focused monitor | Grid | Live selection |
+| **Ctrl + Super + Tab** | Current workspace windows | Carousel | Live |
 
 Choose a different view and preview mode for each shortcut independently.
 
-The workspace overview shows one card per workspace, with small previews of its windows. Use the arrow keys to choose a space, then release Ctrl+Super or press Enter to switch to it. The overview lists workspaces reported by Hyprland on the focused monitor, including empty workspaces.
+The workspace overview shows one card per workspace, with small previews of its windows. Use the arrow keys to choose a space, then release Alt or press Enter to switch to it. The overview lists workspaces reported by Hyprland on the focused monitor, including empty workspaces.
 
 | While the switcher is open | Action |
 | :--- | :--- |
-| Keep holding **Alt** | Keep the switcher visible |
-| Press **Tab** again | Browse the next window |
+| Keep holding the shortcut modifiers | Keep the switcher visible |
+| Press **Tab** again | Browse the next space or window |
 | **← / →** | Move backward or forward |
 | **↑ / ↓** | Move between grid rows |
-| Release **Alt**, press **Enter**, or click a card | Focus the selected window |
+| Release **Alt** / **Ctrl+Super**, press **Enter**, or click a card | Switch to the selected space or focus the selected window |
 | **Esc** | Cancel without switching |
 | **F2** | Open preferences |
 

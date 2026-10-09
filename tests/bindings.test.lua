@@ -27,9 +27,10 @@ local function state() return _G.__switch_magic_runtime_v1 end
 binds.UNRELATED={enabled=true}
 attach('first')
 assert(binds.UNRELATED.enabled)
-assert(binds['ALT + TAB'].action=='switch-magic:workspace')
+assert(binds['ALT + TAB'].action=='switch-magic:spaces')
 assert(binds['ALT + SHIFT + TAB'].action=='switch-magic:monitor')
 assert(binds['CTRL + ALT + TAB'].action=='switch-magic:all')
+assert(binds['CTRL + SUPER + TAB'].action=='switch-magic:workspace-chord')
 local first=state()
 first.remaining=1; attach('first'); assert(first==state() and first.remaining==8 and #events==1)
 events[1].callback(64, nil, 0); timers[#timers].callback(); assert(dispatched[1]=='switch-magic:commit')
