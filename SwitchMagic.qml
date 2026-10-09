@@ -297,7 +297,7 @@ Item {
                     id: headingColumn
                     anchors.horizontalCenter: parent.horizontalCenter; spacing: 12
                     Brand {
-                        visible: root.config.behavior.showLogo
+                        visible: !root.config.behavior || root.config.behavior.showLogo
                         anchors.horizontalCenter: parent.horizontalCenter
                         themeColors: root.themeColors; fontFamily: root.fontFamily
                         textSize: root.activeView ? root.activeView.scene.headerSize : 18
