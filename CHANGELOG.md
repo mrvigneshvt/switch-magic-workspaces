@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Fix workspace icon fallbacks, compact List previews, and disabled hover selection.
+- Remove the conflicting Omarchy shortcut so Ctrl+Super+Tab opens on the focused monitor.
+
 - Add a workspace-first overview with per-workspace window previews and a dedicated shortcut.
 - Honor the Icons only preview mode in workspace cards by showing app icons instead of captured windows.
 - Make Alt+Tab open the workspace overview and Ctrl+Super+Tab switch windows on the current workspace.

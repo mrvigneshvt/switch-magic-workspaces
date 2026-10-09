@@ -12,6 +12,8 @@ Item {
     required property string previewMode
     required property var captureFor
     property bool selected: false
+    property bool compact: false
+    property bool hoverSelect: false
     property int duration: 180
     property string fontFamily: "sans-serif"
     signal picked()
@@ -31,18 +33,19 @@ Item {
         id: previewGrid
         x: root.style.padding
         y: root.style.padding
-        width: parent.width - root.style.padding * 2
-        height: parent.height - root.style.footerHeight - root.style.padding * 2
+        width: Math.max(1, root.compact ? Math.min(root.style.compactPreviewWidth, root.width * 0.45) : root.width - root.style.padding * 2)
+        height: Math.max(1, root.compact ? root.height - root.style.padding * 2 : root.height - root.style.footerHeight - root.style.padding * 2)
         Repeater {
             model: Math.min(root.windows.length, 4)
             ClippingRectangle {
+                id: previewTile
                 required property int index
                 readonly property var windowInfo: root.windows[index]
                 readonly property var desktopEntry: DesktopEntries.heuristicLookup(windowInfo.appId || "")
                 readonly property string appName: desktopEntry ? desktopEntry.name : windowInfo.appId || "Application"
                 readonly property string appIcon: desktopEntry && desktopEntry.icon ? Quickshell.iconPath(desktopEntry.icon, true) : ""
-                width: (previewGrid.width - 5) / 2
-                height: (previewGrid.height - 5) / 2
+                width: Math.max(1, (previewGrid.width - 5) / 2)
+                height: Math.max(1, (previewGrid.height - 5) / 2)
                 x: (index % 2) * (width + 5)
                 y: Math.floor(index / 2) * (height + 5)
                 radius: 5
@@ -66,15 +69,15 @@ Item {
                     Rectangle { anchors.fill: parent; color: Qt.alpha(root.themeColors.accent, 0.08) }
                     Rectangle {
                         id: iconTile
-                        width: Math.min(root.style.previewIconSize, parent.width - 8, parent.height - 8)
+                        width: Math.max(1, Math.min(root.style.previewIconSize, parent.width - 8, parent.height - 8))
                         height: width
                         radius: width * 0.26
                         anchors.centerIn: parent
                         color: Qt.alpha(root.themeColors.accent, 0.10)
                         border.width: 1
                         border.color: Qt.alpha(root.themeColors.accent, 0.14)
-                        Image { id: appIconImage; anchors.centerIn: parent; width: parent.width * 0.62; height: width; source: windowInfo.appIcon; fillMode: Image.PreserveAspectFit; visible: status === Image.Ready }
-                        Text { anchors.centerIn: parent; visible: !appIconImage.visible; text: windowInfo.appName.slice(0, 1).toUpperCase(); color: root.themeColors.accent; font.pixelSize: Math.max(12, parent.width * 0.43); font.family: root.fontFamily }
+                        Image { id: appIconImage; anchors.centerIn: parent; width: parent.width * 0.62; height: width; source: previewTile.appIcon; fillMode: Image.PreserveAspectFit; visible: status === Image.Ready }
+                        Text { anchors.centerIn: parent; visible: !appIconImage.visible; text: previewTile.appName.slice(0, 1).toUpperCase(); color: root.themeColors.accent; font.pixelSize: Math.max(12, parent.width * 0.43); font.family: root.fontFamily }
                     }
                 }
             }
@@ -99,9 +102,9 @@ Item {
         }
     }
     Row {
-        x: root.style.padding + 3
-        y: parent.height - root.style.footerHeight + (root.style.footerHeight - height) / 2
-        width: parent.width - root.style.padding * 2 - 6
+        x: root.compact ? previewGrid.x + previewGrid.width + root.style.padding : root.style.padding + 3
+        y: root.compact ? (parent.height - height) / 2 : parent.height - root.style.footerHeight + (root.style.footerHeight - height) / 2
+        width: Math.max(1, parent.width - x - root.style.padding - 3)
         spacing: 8
         Rectangle {
             width: 30; height: 30; radius: 9
@@ -115,7 +118,7 @@ Item {
             Text { width: parent.width; text: root.windows.length + (root.windows.length === 1 ? " window" : " windows"); color: root.themeColors.muted; font.family: root.fontFamily; font.pixelSize: root.style.subtitleSize; elide: Text.ElideRight }
         }
     }
-    MouseArea { anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onPositionChanged: if (containsMouse) root.hovered(); onClicked: root.picked() }
+    MouseArea { anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onPositionChanged: if (root.hoverSelect && containsMouse) root.hovered(); onClicked: root.picked() }
     Accessible.role: Accessible.ListItem
     Accessible.name: "Workspace " + root.workspace.name + ", " + root.windows.length + " windows"
     Accessible.selected: root.selected

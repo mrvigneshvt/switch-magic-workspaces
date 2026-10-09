@@ -360,6 +360,8 @@ Item {
                             visible: opacity > 0.01
                             enabled: place.visible
                             transformOrigin: Item.Bottom
+                            compact: root.layoutName === "list"
+                            hoverSelect: root.config.behavior.hoverSelect
                             workspace: modelData
                             themeColors: root.themeColors
                             style: root.activeView.card

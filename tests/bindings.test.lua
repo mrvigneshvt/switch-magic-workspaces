@@ -25,8 +25,12 @@ hl = {
 local function attach(owner) assert(loadfile('runtime/bindings.lua'))(owner) end
 local function state() return _G.__switch_magic_runtime_v1 end
 binds.UNRELATED={enabled=true}
+-- Stock Omarchy uses the opposite modifier order for this same key chord.
+binds['SUPER + CTRL + TAB']={enabled=true, action='former-workspace'}
+binds['CTRL + SUPER + TAB']={enabled=true, action='custom-workspace'}
 attach('first')
 assert(binds.UNRELATED.enabled)
+assert(binds['SUPER + CTRL + TAB']==nil, 'remove the stock Former workspace action before opening the picker')
 assert(binds['ALT + TAB'].action=='switch-magic:spaces')
 assert(binds['ALT + SHIFT + TAB'].action=='switch-magic:monitor')
 assert(binds['CTRL + ALT + TAB'].action=='switch-magic:all')

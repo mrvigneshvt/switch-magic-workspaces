@@ -32,6 +32,9 @@ local function emit(name)
     if state.active then hl.dispatch(hl.dsp.global('switch-magic:' .. name)) end
 end
 local ok, err = pcall(function()
+    -- Omarchy spells its Former workspace chord in this order. Lua unbind
+    -- matches the chord spelling, so remove it as well as our own spelling.
+    hl.unbind('SUPER + CTRL + TAB')
     for _, chord in ipairs({
         {'ALT + TAB', 'spaces', 'Switch Magic: workspace overview'},
         {'ALT + SHIFT + TAB', 'monitor', 'Switch Magic: current monitor'},
