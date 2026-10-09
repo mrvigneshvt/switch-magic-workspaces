@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 import QtQuick
-import QtQuick.Wayland
 import Quickshell
+import Quickshell.Wayland
 import Quickshell.Widgets
 
 Item {
