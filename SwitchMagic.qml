@@ -356,9 +356,10 @@ Item {
                             required property int index
                             readonly property var place: Model.placement(root.layoutName, root.layout, index, root.selected, root.rows.length, root.geometry)
                             x: place.x; y: place.y; width: place.width; height: place.height
-                            scale: place.scale; z: place.z; opacity: place.opacity
+                            rotation: place.rotation; scale: place.scale; z: place.z; opacity: place.opacity
                             visible: opacity > 0.01
                             enabled: place.visible
+                            transformOrigin: Item.Bottom
                             workspace: modelData
                             themeColors: root.themeColors
                             style: root.activeView.card
@@ -369,6 +370,11 @@ Item {
                             fontFamily: root.fontFamily
                             onPicked: { root.selected = index; root.commit(); }
                             onHovered: root.selected = index
+                            Behavior on x { NumberAnimation { duration: root.animation.position ? root.motion : 0; easing.type: root.easing } }
+                            Behavior on y { NumberAnimation { duration: root.animation.position ? root.motion : 0; easing.type: root.easing } }
+                            Behavior on rotation { NumberAnimation { duration: root.animation.rotation ? root.motion : 0; easing.type: root.easing } }
+                            Behavior on scale { NumberAnimation { duration: root.animation.scale ? root.motion : 0; easing.type: root.easing } }
+                            Behavior on opacity { NumberAnimation { duration: root.animation.opacity ? root.motion : 0 } }
                         }
                     }
                     Text { anchors.centerIn: parent; visible: !root.rows.length; text: root.scope === "spaces" ? "No workspaces on this monitor" : "No windows in this scope"; color: root.themeColors.muted; font.family: root.fontFamily; font.pixelSize: 20 }
