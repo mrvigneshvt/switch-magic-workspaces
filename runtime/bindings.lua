@@ -12,7 +12,7 @@ if prior then prior:stop(false) end
 local state = { owner = owner, remaining = 8, binds = {}, active = true }
 _G[slot] = state
 function state:valid()
-    if not self.active or #self.binds ~= 3 then return false end
+    if not self.active or #self.binds ~= 4 then return false end
     for _, bind in ipairs(self.binds) do
         if bind:is_enabled() ~= true then return false end
     end
@@ -36,6 +36,7 @@ local ok, err = pcall(function()
         {'ALT + TAB', 'workspace', 'Switch Magic: current workspace'},
         {'ALT + SHIFT + TAB', 'monitor', 'Switch Magic: current monitor'},
         {'CTRL + ALT + TAB', 'all', 'Switch Magic: all workspaces'},
+        {'CTRL + SUPER + TAB', 'spaces', 'Switch Magic: workspace overview'},
     }) do
         hl.unbind(chord[1])
         state.binds[#state.binds + 1] = hl.bind(chord[1], hl.dsp.global('switch-magic:' .. chord[2]), {description = chord[3], repeating = true})

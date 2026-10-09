@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add a workspace-first overview with per-workspace window previews and a dedicated shortcut.
+- Add a preference to show or hide the picker logo and wordmark.
+
 ## 0.3.2
 
 - Automatically restrict existing backup directories to 0700 and files to 0600 before any migration early return or installer preflight.
